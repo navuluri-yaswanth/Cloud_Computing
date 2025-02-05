@@ -1,0 +1,210 @@
+{
+    "name": "PL_MappingDataFlow",
+    "properties": {
+        "activities": [
+            {
+                "name": "Copy data1",
+                "type": "Copy",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "JsonSource",
+                        "storeSettings": {
+                            "type": "HttpReadSettings",
+                            "requestMethod": "GET"
+                        },
+                        "formatSettings": {
+                            "type": "JsonReadSettings"
+                        }
+                    },
+                    "sink": {
+                        "type": "DelimitedTextSink",
+                        "storeSettings": {
+                            "type": "AzureBlobStorageWriteSettings"
+                        },
+                        "formatSettings": {
+                            "type": "DelimitedTextWriteSettings",
+                            "quoteAllText": true,
+                            "fileExtension": ".txt"
+                        }
+                    },
+                    "enableStaging": false,
+                    "translator": {
+                        "type": "TabularTranslator",
+                        "mappings": [
+                            {
+                                "source": {
+                                    "path": "$['id']"
+                                },
+                                "sink": {
+                                    "name": "id"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['name']"
+                                },
+                                "sink": {
+                                    "name": "name"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['address']"
+                                },
+                                "sink": {
+                                    "name": "address"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['zip']"
+                                },
+                                "sink": {
+                                    "name": "zip"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['country']"
+                                },
+                                "sink": {
+                                    "name": "country"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['employeeCount']"
+                                },
+                                "sink": {
+                                    "name": "employeeCount"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['industry']"
+                                },
+                                "sink": {
+                                    "name": "industry"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['marketCap']"
+                                },
+                                "sink": {
+                                    "name": "marketCap"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['domain']"
+                                },
+                                "sink": {
+                                    "name": "domain"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['logo']"
+                                },
+                                "sink": {
+                                    "name": "logo"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['ceoName']"
+                                },
+                                "sink": {
+                                    "name": "ceoName"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "inputs": [
+                    {
+                        "referenceName": "Json3",
+                        "type": "DatasetReference"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "DelimitedText6",
+                        "type": "DatasetReference"
+                    }
+                ]
+            },
+            {
+                "name": "Data flow1",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [
+                    {
+                        "activity": "Copy data1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataflow": {
+                        "referenceName": "dataflow2",
+                        "type": "DataFlowReference"
+                    },
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "Fine"
+                }
+            },
+            {
+                "name": "Web1",
+                "type": "WebActivity",
+                "dependsOn": [
+                    {
+                        "activity": "Data flow1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "method": "POST",
+                    "url": {
+                        "value": "https://prod-13.northcentralus.logic.azure.com:443/workflows/35320b2138964a0194ee27d951c3c4bb/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=ulkyfbnG-54KHM4TkZ-zAZAS8qk8sRqHeBp9Asu50og",
+                        "type": "Expression"
+                    }
+                }
+            }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2025-02-05T07:15:19Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
